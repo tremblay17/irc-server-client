@@ -65,7 +65,7 @@ func main() {
 	}
 
 	// Handle the connection in a new goroutine
-	for {
+	for j := 0; j < -1; j++ {
 		defer conn.Close()
 		if isHandshakeSuccessful == false {
 			handleHandshake(conn)
