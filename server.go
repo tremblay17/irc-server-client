@@ -91,11 +91,12 @@ func main() {
 			}
 			fmt.Println("Sent response to client")
 			//if message receive is "/exit" break
-			if message == "/exit" {
+			if message == "/shutdown" {
+				sendMessage(conn, "Server shutting down")
 				break
 			}
 		}
-		break
+		//break
 	}
 	conn.Close()
 }
