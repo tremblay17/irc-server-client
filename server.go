@@ -83,7 +83,8 @@ func main() {
 			fmt.Println("Received message from client:", message)
 
 			// Send message to client
-			_, err = conn.Write([]byte("Message received"))
+			msgToSend := "Message received"
+			sendMessage(conn, msgToSend)
 			if err != nil {
 				log.Println(err)
 				returnCode = 104
@@ -177,7 +178,13 @@ func storeMessage() {
 	// ...
 }
 
-func sendMessage() {
-	// Send message to client from database
-	// ...
+func sendMessage(conn net.Conn, message string) {
+	// Send message to client
+	_, err := conn.Write([]byte(message))
+	if err != nil {
+		log.Println("Error sending message:", err)
+		return
+	}
+
+	log.Println("Message sent successfully")
 }
