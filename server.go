@@ -15,6 +15,7 @@ var returnCode int
 var senderUname string
 var receiverUname string
 var listenAddr string
+var isHandshakeSuccessful bool
 
 type IP struct {
 	Query string
@@ -40,6 +41,7 @@ func getip2() string {
 
 func main() {
 	returnCode = 0
+	isHandshakeSuccessful = false
 	// Listen for incoming connections
 	args := os.Args[1:]
 	if len(args[1]) == 0 {
@@ -63,8 +65,10 @@ func main() {
 	}
 
 	// Handle the connection in a new goroutine
-	go handleHandshake(conn)
 	for {
+		if isHandshakeSuccessful == false {
+			handleHandshake(conn)
+		}
 		if returnCode != 111 {
 			break
 		}
