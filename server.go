@@ -85,12 +85,10 @@ func main() {
 		fmt.Println("Sent response to client")
 
 	}
-
+	conn.Close()
 }
 
 func handleHandshake(conn net.Conn) {
-	defer conn.Close()
-
 	// Read handshake from client
 	buffer := make([]byte, 5)
 	n, err := conn.Read(buffer)

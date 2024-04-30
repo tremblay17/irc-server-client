@@ -27,6 +27,7 @@ int main() {
     std::cout << "Enter the receiver's initials: ";
     std::cin >> receiver;
     if (!client.sendMailingInfo(sender, receiver)) {
+        throw std::runtime_error("Failed to send mailing info");
         return 1;
     }
     //send and receive messages
