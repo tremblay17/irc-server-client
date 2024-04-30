@@ -65,7 +65,7 @@ func main() {
 	}
 
 	// Handle the connection in a new goroutine
-	for j := 0; j < -1; j++ {
+	for {
 		defer conn.Close()
 		if isHandshakeSuccessful == false {
 			handleHandshake(conn)
@@ -74,7 +74,7 @@ func main() {
 			break
 		}
 		// Receive message from client until a message is sent
-		for i := 0; i < -1; i++ {
+		for {
 			message, err := recvMessage(conn)
 			if err != nil {
 				log.Println(err)
