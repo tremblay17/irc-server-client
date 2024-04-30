@@ -54,7 +54,7 @@ func main() {
 	}
 	defer listener.Close()
 
-	fmt.Println("Server started. Listening on localhost:8080")
+	fmt.Println("Server started. Listening on ", listenAddr)
 
 	for {
 		// Accept new connection
