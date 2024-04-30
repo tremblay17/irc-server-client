@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -14,6 +14,7 @@ import (
 var returnCode int
 var senderUname string
 var receiverUname string
+var listenAddr string
 
 type IP struct {
 	Query string
@@ -26,7 +27,7 @@ func getip2() string {
 	}
 	defer req.Body.Close()
 
-	body, err := ioutil.ReadAll(req.Body)
+	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		return err.Error()
 	}
@@ -41,7 +42,11 @@ func main() {
 	returnCode = 0
 	// Listen for incoming connections
 	args := os.Args[1:]
-	listenAddr := getip2() + ":" + args[0]
+	if len(args[1]) == 0 {
+		listenAddr = getip2() + ":" + args[0]
+	} else {
+		listenAddr = args[1] + ":" + args[0]
+	}
 	fmt.Println("Server IP:", listenAddr)
 	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
