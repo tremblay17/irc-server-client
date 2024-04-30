@@ -56,37 +56,36 @@ func main() {
 
 	fmt.Println("Server started. Listening on ", listenAddr)
 
-	for {
-		// Accept new connection
-		conn, err := listener.Accept()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// Handle the connection in a new goroutine
-		go handleHandshake(conn)
+	// Accept new connection
+	conn, err := listener.Accept()
+	if err != nil {
+		log.Fatal(err)
 	}
-}
 
-func banIP() {
-	// Ban the IP address
-	//		done by adding the IP address to a blacklist table
-}
+	// Handle the connection in a new goroutine
+	go handleHandshake(conn)
+	for {
+		if returnCode != 111 {
+			break
+		}
+		// Receive message from client until a message is sent
+		message, err := recvMessage(conn)
+		if err != nil {
+			log.Println(err)
+			returnCode = 103
+		}
+		fmt.Println("Received message from client:", message)
 
-func isFirstConnection() {
-	// Check if this is the first connection from IP
-	//		done by checking the connection history table
-	// if yes, perform key exchange
-	// add entry to database
-	// if no, skip key exchange
-}
+		// Send message to client
+		_, err = conn.Write([]byte("Message received"))
+		if err != nil {
+			log.Println(err)
+			returnCode = 104
+		}
+		fmt.Println("Sent response to client")
 
-func keyExchange() {
-	// Generate a public-private key pair
-	// The client will generate a public-private key pair
-	// The server will receive a public key from the client
-	// Receive shared secret from client
-	// Server will decrypt the shared secret using its public key
+	}
+
 }
 
 func handleHandshake(conn net.Conn) {
@@ -154,9 +153,14 @@ func handleHandshake(conn net.Conn) {
 	}
 }
 
-func recvMessage() {
-	// Receive message from client
-	// ...
+func recvMessage(conn net.Conn) (string, error) {
+	buffer := make([]byte, 1024)
+	n, err := conn.Read(buffer)
+	if err != nil {
+		return "", err
+	}
+	message := string(buffer[:n])
+	return message, nil
 }
 
 func storeMessage() {
