@@ -1,20 +1,49 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
-	"errors"
+	"net/http"
+	"os"
 )
 
 var returnCode int
 var senderUname string
 var receiverUname string
 
+type IP struct {
+	Query string
+}
+
+func getip2() string {
+	req, err := http.Get("http://ip-api.com/json/")
+	if err != nil {
+		return err.Error()
+	}
+	defer req.Body.Close()
+
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		return err.Error()
+	}
+
+	var ip IP
+	json.Unmarshal(body, &ip)
+
+	return ip.Query
+}
+
 func main() {
 	returnCode = 0
 	// Listen for incoming connections
-	listener, err := net.Listen("tcp", "localhost:8080")
+	args := os.Args[1:]
+	listenAddr := getip2() + ":" + args[0]
+	fmt.Println("Server IP:", listenAddr)
+	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,7 +97,7 @@ func handleHandshake(conn net.Conn) {
 
 	// Process handshake
 	handshake := string(buffer[:n])
-	if(handshake != "CYFTM") {
+	if handshake != "CYFTM" {
 		err = errors.New("Unrecognized handshake")
 		//send response to client
 		_, err = conn.Write([]byte("EURH"))
@@ -102,7 +131,6 @@ func handleHandshake(conn net.Conn) {
 		receiverUname = string(buffer[3:5])
 		receiverIp := conn.RemoteAddr().String()
 		//send receiverIp to client
-
 
 		fmt.Println("Sender:", senderUname, senderIp)
 		fmt.Println("Receiver:", receiverUname, receiverIp)
