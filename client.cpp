@@ -37,15 +37,12 @@ int main() {
 
         std::cout << "Enter a message: ";
         std::cin >> messageToSend;
-        if(!client.sendMailingInfo(sender, receiver)) {
+        if (!client.sendMessage(messageToSend)) {
             return 1;
         }
-        // if (!client.sendMessage(message).compare("Message failed to send")) {
-        //     return 1;
-        // }
-        // if (!client.receiveMessage(message).compare("Message failed to receive")) {
-        //     return 1;
-        // }
+        if (!client.receiveMessage(messageReceived)) {
+            return 1;
+        }
         std::cout << "Server: " << messageReceived << std::endl;
     }
 
